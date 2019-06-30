@@ -88,7 +88,13 @@ export default {
     methods: {
         // tab切换时触发
         handleSearchTab(item, index){
-            
+           if(index === 1){
+               this.$confirm("目前暂不支持往返，请使用单程选票！", '提示', {
+                    confirmButtonText: '确定',
+                    showCancelButton: false,
+                    type: 'warning'
+                })
+           }
         },
         
         // 出发城市输入框获得焦点时触发
@@ -100,7 +106,7 @@ export default {
             }
 
             this.$axios({
-                url: "http://157.122.54.189:9095/airs/city?name=" + value,
+                url: "/airs/city?name=" + value,
                 method: "GET"
             }).then(res => {
                 const {data} = res.data;
@@ -109,7 +115,11 @@ export default {
                         ...v,
                         value: v.name.replace("市", "")
                     }
-                })
+                });
+                
+                // 如果用户不在下拉选项中选择，默认选择第一个
+                this.form.departCity = newData[0].value;
+                this.form.departCode = newData[0].sort;
 
                 // cb函数接收的参数是数组，数据里面每一项必须是对象，然后带有value的属性
                 cb(newData);
@@ -124,7 +134,7 @@ export default {
             }
 
             this.$axios({
-                url: "http://157.122.54.189:9095/airs/city?name=" + value,
+                url: "/airs/city?name=" + value,
                 method: "GET"
             }).then(res => {
                 const {data} = res.data;
@@ -133,7 +143,10 @@ export default {
                         ...v,
                         value: v.name.replace("市", "")
                     }
-                })
+                });
+
+                this.form.destCity = newData[0].value;
+                this.form.destCode = newData[0].sort;
 
                 // cb函数接收的参数是数组，数据里面每一项必须是对象，然后带有value的属性
                 cb(newData);
@@ -159,7 +172,14 @@ export default {
 
         // 触发和目标城市切换时触发
         handleReverse(){
-            
+            const { departCity, departCode, destCity, destCode } = this.form;
+
+            // 到达城市赋值给出发城市
+            this.form.departCity = destCity;
+            this.form.departCode = destCode;
+
+            this.form.destCity = departCity;
+            this.form.destCode = departCode;
         },
 
         // 提交表单是触发
