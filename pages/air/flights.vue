@@ -5,13 +5,10 @@
             <!-- 顶部过滤列表 -->
             <div class="flights-content">
                 <!-- 过滤条件 -->
-                <div>
-                    
-                </div>
+                 <FlightsFilters :data="flightsData"/>
                 
                 <!-- 航班头部布局 -->
                 <FightsListHead/>
-                
                 
                 <!-- 航班信息 -->
                 <div>
@@ -50,6 +47,7 @@
 
 import FightsListHead from "@/components/air/fightsListHead.vue";
 import FlightsItem from "@/components/air/flightsItem.vue";
+import FlightsFilters from "@/components/air/flightsFilters.vue"
 
 export default {
     data(){
@@ -57,7 +55,9 @@ export default {
             // 默认机票列表总数据
             flightsData: {
                 // 默认机票列表
-                flights: []
+                flights: [],
+                info: {},
+                options: {}
             },
 
             pageIndex: 1,   // 默认显示第一页
@@ -69,7 +69,8 @@ export default {
 
     components: {
         FightsListHead,
-        FlightsItem
+        FlightsItem,
+        FlightsFilters
     },
 
     methods: {
