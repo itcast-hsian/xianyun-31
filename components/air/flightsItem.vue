@@ -13,7 +13,7 @@
                             <span>{{ data.org_airport_name }}</span>
                         </el-col>
                         <el-col :span="8" class="flight-time">
-                            <span>2时20分</span>
+                            <span>{{rankTime}}</span>
                         </el-col>
                         <el-col :span="8" class="flight-airport">
                             <strong>{{ data.arr_time }}</strong>
@@ -31,12 +31,21 @@
             <el-row type="flex"  justify="space-between" align="middle">
                 <el-col :span="4">低价推荐</el-col>
                 <el-col :span="20">
-                    <el-row type="flex" justify="space-between" align="middle" class="flight-sell">
+
+                    <!-- 座位的信息 -->
+                    <el-row 
+                    type="flex" 
+                    justify="space-between" 
+                    align="middle" 
+                    class="flight-sell"
+                    v-for="(item, index) in data.seat_infos"
+                    :key="index">
                         <el-col :span="16" class="flight-sell-left">
-                            <span>经济舱</span> | 上海一诺千金航空服务有限公司
+                            <span>{{item.name}}</span> | 
+                            {{item.supplierName}}
                         </el-col>
                         <el-col :span="5" class="price">
-                            ￥1345
+                            ￥{{item.org_settle_price}}
                         </el-col>
                         <el-col :span="3" class="choose-button">
                             <el-button 
@@ -44,9 +53,10 @@
                             size="mini">
                             选定
                             </el-button>
-                            <p>剩余：83</p>
+                            <p>剩余：{{item.discount}}</p>
                         </el-col>
                     </el-row>
+
                 </el-col>
             </el-row>
         </div>
@@ -63,6 +73,28 @@ export default {
             default: {}
         }
     },
+
+    computed: {
+        rankTime(){
+            // 出发时间,到达时间
+            const { dep_time, arr_time } = this.data;
+
+            let arr = arr_time.split(":");
+            const dep = dep_time.split(":");
+
+            // 如果到达时间小于出发时间 - 就是第二天的时间
+            if(arr[0] < dep[0]){
+                arr[0] += 24;
+            }
+
+            const count = (arr[0] * 60 + +arr[1]) - (dep[0] * 60 + +dep[1]);
+
+            const hours = Math.floor(count / 60);
+            const min = count % 60;
+
+            return `${hours}时${min}分钟`;
+        }
+    }
 }
 </script>
 
