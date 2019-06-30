@@ -1,6 +1,6 @@
 <template>
     <div class="flight-item">
-        <div>
+        <div @click="handleShow">
             <!-- 显示的机票信息 -->
             <el-row type="flex" align="middle" class="flight-info">
                 <el-col :span="6">
@@ -26,7 +26,7 @@
                 </el-col>
             </el-row>
         </div>
-        <div class="flight-recommend">
+        <div class="flight-recommend" v-if="isShow">
             <!-- 隐藏的座位信息列表 -->
             <el-row type="flex"  justify="space-between" align="middle">
                 <el-col :span="4">低价推荐</el-col>
@@ -65,6 +65,12 @@
 
 <script>
 export default {
+    data(){
+        return {
+            isShow: false // 控制座位信息的显示隐藏
+        }
+    },
+    
     props: {
         // 数据
         data: {
@@ -93,6 +99,12 @@ export default {
             const min = count % 60;
 
             return `${hours}时${min}分钟`;
+        }
+    },
+
+    methods: {
+        handleShow(){
+            this.isShow = !this.isShow;
         }
     }
 }
