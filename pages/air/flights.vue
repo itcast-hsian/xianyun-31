@@ -5,7 +5,10 @@
             <!-- 顶部过滤列表 -->
             <div class="flights-content">
                 <!-- 过滤条件 -->
-                 <FlightsFilters :data="flightsData"/>
+                <!-- 传递一个方法，并且这个方法是要修改dataList -->
+                <FlightsFilters 
+                :data="cacheflightsData" 
+                @setDataList="setDataList"/>
                 
                 <!-- 航班头部布局 -->
                 <FightsListHead/>
@@ -52,8 +55,16 @@ import FlightsFilters from "@/components/air/flightsFilters.vue"
 export default {
     data(){
         return {
-            // 默认机票列表总数据
+            // 默认机票列表总数据,会被修改
             flightsData: {
+                // 默认机票列表
+                flights: [],
+                info: {},
+                options: {}
+            },
+
+            // 总数据，一旦赋值之后不会被修改
+            cacheflightsData: {
                 // 默认机票列表
                 flights: [],
                 info: {},
@@ -83,11 +94,24 @@ export default {
         handleCurrentChange(value){
             this.pageIndex = value;
 
+            this.setDataList();
+        },
+
+        // 修改dataList
+        setDataList(arr){
+
+            if(arr){
+                this.flightsData.flights = arr;
+                // 初始化分页变量
+                this.total = arr.length;
+                this.pageIndex = 1;
+            }
+
             // 计算截图列表的数据
             this.dataList = this.flightsData.flights.slice(
                 (this.pageIndex - 1) * this.pageSize,
                 this.pageIndex * this.pageSize
-            )
+            );
         }
     },
 
@@ -98,6 +122,10 @@ export default {
             params: this.$route.query
         }).then(res => {
             this.flightsData = res.data;
+
+            // 缓存总数据，值和flightsData是相等的，一旦赋值之后不得修改
+            this.cacheflightsData = {...res.data};
+
             // 总条数
             this.total = res.data.total;
             

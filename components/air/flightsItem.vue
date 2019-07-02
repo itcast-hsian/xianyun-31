@@ -50,7 +50,8 @@
                         <el-col :span="3" class="choose-button">
                             <el-button 
                             type="warning" 
-                            size="mini">
+                            size="mini"
+                            @click="handleToOrder">
                             选定
                             </el-button>
                             <p>剩余：{{item.discount}}</p>

@@ -21,10 +21,10 @@
             <el-col :span="4">
                 <el-select size="mini" v-model="flightTimes"  placeholder="起飞时间" @change="handleFlightTimes">
                     <el-option
-                    :label="`${item.from}:00 - ${item.to}:00`"
-                    :value="item"
                     v-for="(item, index) in data.options.flightTimes"
                     :key="index"
+                    :label="`${item.from}:00 - ${item.to}:00`"
+                    :value="item"
                     >
                     </el-option>
                 </el-select>
@@ -98,19 +98,41 @@ export default {
             
         },
 
-        // 选择出发时间时候触发
+        // 选择起飞时间时候触发
         handleFlightTimes(value){
-            
+            // console.log(value)
+
+            const arr = this.data.flights.filter(v => {
+                // 出发时间小时
+                const start = +v.dep_time.split(":")[0];
+
+                return start >= value.from && start < value.to;
+            });
+
+            this.$emit("setDataList", arr);
         },
 
-         // 选择航空公司时候触发
+        // 选择航空公司时候触发
         handleCompany(value){
-            
+            // console.log(value)
+            // console.log(this.data.flights);
+
+            const arr = this.data.flights.filter(v => {
+                // 过滤航空公司值等于value
+                return v.airline_name === value;
+            });
+
+            this.$emit("setDataList", arr);
         },
 
          // 选择机型时候触发
         handleAirSize(value){
-           console.log(value)
+            const arr = this.data.flights.filter(v => {
+                // 过滤航空公司值等于value
+                return v.plane_size === value;
+            });
+
+            this.$emit("setDataList", arr);
         },
         
         // 撤销条件时候触发
