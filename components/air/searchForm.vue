@@ -225,6 +225,16 @@ export default {
                path: "/air/flights",
                query: this.form
            });
+
+           // 把当前表单的值保存到本地
+           const localAirs = JSON.parse(localStorage.getItem("airs") || `[]`);
+
+           // 存进去新的搜索记录
+           localAirs.unshift(this.form);
+
+           // 保存到本地
+           localStorage.setItem("airs", JSON.stringify(localAirs));
+
         }
     },
     mounted() {
