@@ -37,7 +37,7 @@
                     </el-form-item>
 
                     <!-- 删除按钮 -->
-                    <span class="delete-user" @click="handleDeleteUser()">-</span>
+                    <span class="delete-user" @click="handleDeleteUser(index)">-</span>
                 </div>
             </el-form>
 
@@ -47,9 +47,12 @@
         <div class="air-column">
             <h2>保险</h2>
             <div>
-                <div class="insurance-item">
+                <div 
+                class="insurance-item" 
+                v-for="(item, index) in infoData.insurances"
+                :key="index">
                     <el-checkbox 
-                    label="航空意外险：￥30/份×1  最高赔付260万" 
+                    :label="`${item.type}：￥${item.price}/份×1  最高赔付${item.compensation}`" 
                     border>
                     </el-checkbox> 
                 </div>
@@ -91,7 +94,12 @@ export default {
                     username: "",
                     id: ""
                 }
-            ]
+            ],
+
+            // 机票信息
+            infoData: {
+                insurances: []
+            },
         }
     },
     methods: {
@@ -104,8 +112,8 @@ export default {
         },
         
         // 移除乘机人
-        handleDeleteUse(){
-
+        handleDeleteUser(index){
+            this.users.splice(index, 1);
         },
         
         // 发送手机验证码
@@ -117,6 +125,20 @@ export default {
         handleSubmit(){
             
         }
+    },
+
+    mounted(){
+
+        // 请求机票信息
+        this.$axios({
+            url: `/airs/${this.$route.query.id}`,
+            method: "GET",
+            params: {
+                seat_xid: this.$route.query.seat_xid
+            }
+        }).then(res => {
+            this.infoData = res.data;
+        })
     }
 }
 </script>
