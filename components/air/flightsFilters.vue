@@ -24,7 +24,7 @@
                     v-for="(item, index) in data.options.flightTimes"
                     :key="index"
                     :label="`${item.from}:00 - ${item.to}:00`"
-                    :value="item"
+                    :value="`${item.from},${item.to}`"
                     >
                     </el-option>
                 </el-select>
@@ -100,13 +100,13 @@ export default {
 
         // 选择起飞时间时候触发
         handleFlightTimes(value){
-            // console.log(value)
+            const [from, to] = value.split(","); // [6,12]
 
             const arr = this.data.flights.filter(v => {
                 // 出发时间小时
                 const start = +v.dep_time.split(":")[0];
 
-                return start >= value.from && start < value.to;
+                return start >= from && start < to;
             });
 
             this.$emit("setDataList", arr);
@@ -119,7 +119,22 @@ export default {
 
             const arr = this.data.flights.filter(v => {
                 // 过滤航空公司值等于value
-                return v.airline_name === value;
+                let hasValue = false; // 当前这个机票是否合适
+
+                if(v.airline_name === value){
+
+                    hasValue = true;
+                    
+                    // 多选
+                    // const [from, to] = this.flightTimes.split(","); // [6,12]
+                    // const start = +v.dep_time.split(":")[0];
+                    
+                    // if( from && start <= from || start > to){
+                    //     hasValue = false;
+                    // }
+                }
+
+                return hasValue;
             });
 
             this.$emit("setDataList", arr);
@@ -137,7 +152,12 @@ export default {
         
         // 撤销条件时候触发
         handleFiltersCancel(){
-            
+            this.airport = "";
+            this.flightTimes = "";
+            this.company = "";
+            this.airSize = "";
+
+            this.$emit("setDataList", this.data.flights);
         },
     }
 }

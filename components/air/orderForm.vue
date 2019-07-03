@@ -53,7 +53,8 @@
                 :key="index">
                     <el-checkbox 
                     :label="`${item.type}：￥${item.price}/份×1  最高赔付${item.compensation}`" 
-                    border>
+                    border
+                    @change="handleInsurance(item.id)">
                     </el-checkbox> 
                 </div>
             </div>
@@ -64,11 +65,11 @@
             <div class="contact">
                 <el-form label-width="60px">
                     <el-form-item label="姓名">
-                        <el-input></el-input>
+                        <el-input v-model="contactName"></el-input>
                     </el-form-item>
 
                     <el-form-item label="手机">
-                        <el-input placeholder="请输入内容">
+                        <el-input  v-model="contactPhone" placeholder="请输入内容">
                             <template slot="append">
                             <el-button @click="handleSendCaptcha">发送验证码</el-button>
                             </template>
@@ -76,7 +77,7 @@
                     </el-form-item>
 
                     <el-form-item label="验证码">
-                        <el-input></el-input>
+                        <el-input v-model="captcha"></el-input>
                     </el-form-item>
                 </el-form>   
                 <el-button type="warning" class="submit" @click="handleSubmit">提交订单</el-button>
@@ -93,8 +94,15 @@ export default {
                 {
                     username: "",
                     id: ""
-                }
+                },
             ],
+
+            insurances: [],     // 选中的保险id
+            contactName: "",    // 联系人
+            contactPhone: "",   // 联系电话
+            invoice: false,     // 不开发票
+            captcha: "",        // 手机验证码
+
 
             // 机票信息
             infoData: {
@@ -114,6 +122,17 @@ export default {
         // 移除乘机人
         handleDeleteUser(index){
             this.users.splice(index, 1);
+        },
+
+        // 选择保险时候触发， 把保险的id添加到data的insurances
+        handleInsurance(id){
+            const index = this.insurances.indexOf(id);
+
+            if(index === -1){
+                this.insurances.push(id);
+            }else{
+                this.insurances.splice(index, 1);
+            }
         },
         
         // 发送手机验证码
