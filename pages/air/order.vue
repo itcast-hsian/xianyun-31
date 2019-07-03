@@ -2,10 +2,12 @@
     <div class="container">
         <el-row type="flex" justify="space-between">
             <!-- 订单表单 -->
-            <OrderForm @setInfoData="setInfoData"/>
+            <OrderForm 
+            @setInfoData="setInfoData" 
+            @setAllPrice="setAllPrice"/>
 
             <!-- 侧边栏 -->
-            <OrderAside :data="infoData"/>
+            <OrderAside :data="infoData" :allPrice="allPrice"/>
         </el-row>
     </div>
 </template>
@@ -20,7 +22,9 @@ export default {
             // 机票信息的初始化值
             infoData: {
                 seat_infos: {}
-            }
+            },
+            // 总价格
+            allPrice: 0
         }
     },
 
@@ -28,6 +32,11 @@ export default {
         // 给表单组件设置机票信息
         setInfoData(data){
             this.infoData = data;
+        },
+
+        // 总价格
+        setAllPrice(price){
+            this.allPrice = price;
         }
     },
 

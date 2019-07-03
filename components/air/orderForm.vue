@@ -85,6 +85,8 @@
                 </el-button>
             </div>
         </div>
+
+        <input type="hidden" :value="allPrice">
     </div>
 </template>
 
@@ -108,10 +110,35 @@ export default {
 
             // 机票信息
             infoData: {
-                insurances: []
+                insurances: [],
+                seat_infos: {}
             },
         }
     },
+
+    computed: {
+        // 计算总价格
+        allPrice(){
+            let price = 0;
+
+            // 机票单价
+            price += this.infoData.seat_infos.org_settle_price;
+
+            // 添加燃油费
+            price += this.infoData.airport_tax_audlet;
+
+            // 保险
+            price += this.insurances.length * 30;
+
+            price *= this.users.length;
+
+            // 把总价格传递给父组件
+            this.$emit("setAllPrice", price);
+
+            return price;
+        }
+    },
+
     methods: {
         // 添加乘机人
         handleAddUsers(){
