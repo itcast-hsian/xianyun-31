@@ -215,7 +215,18 @@ export default {
                     Authorization: `Bearer ${token}`
                 }
             }).then(res => {
-                console.log(res)
+                
+                this.$message.success("正在生成订单，请稍后...");
+
+                // 订单id
+                const {id} = res.data.data;
+
+                this.$router.push({
+                    path: "/air/pay",
+                    query: {
+                        id
+                    }
+                });
             })
         }
     },
