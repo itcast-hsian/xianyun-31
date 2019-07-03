@@ -80,7 +80,9 @@
                         <el-input v-model="captcha"></el-input>
                     </el-form-item>
                 </el-form>   
-                <el-button type="warning" class="submit" @click="handleSubmit">提交订单</el-button>
+                <el-button type="warning" class="submit" @click="handleSubmit">
+                    提交订单
+                </el-button>
             </div>
         </div>
     </div>
@@ -137,12 +139,57 @@ export default {
         
         // 发送手机验证码
         handleSendCaptcha(){
-            
+            // 判断手机号码不能为空
+            if(this.contactPhone == ""){
+                this.$confirm('手机号码不能为空', '提示', {
+                    confirmButtonText: '确定',
+                    type: 'warning'
+                });
+                return;
+            }
+
+            // 请求验证码
+            this.$axios({
+                url: "/captchas",
+                method: "POST",
+                data: {
+                    tel: this.contactPhone
+                }
+            }).then(res => {
+                // 模拟验证码的返回
+                const {code} = res.data;
+                alert("验证码是：" + code);
+            });
         },
 
         // 提交订单
         handleSubmit(){
-            
+
+            const data = {
+                users: this.users,
+                insurances: this.insurances,
+                contactName: this.contactName,
+                contactPhone: this.contactPhone,
+                captcha: this.captcha,
+                invoice: this.invoice,
+                seat_xid: this.$route.query.seat_xid,
+                air: this.$route.query.id,
+            }
+
+            // 获取token
+            const token = this.$store.state.user.userInfo.token;
+
+            // 提交生成机票订单
+            this.$axios({
+                url: "/airorders",
+                method: "POST",
+                data,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }).then(res => {
+                console.log(res)
+            })
         }
     },
 
