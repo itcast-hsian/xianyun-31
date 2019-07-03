@@ -204,6 +204,8 @@ export default {
             }
         }).then(res => {
             this.infoData = res.data;
+
+            this.$emit("setInfoData", this.infoData);
         })
     }
 }
