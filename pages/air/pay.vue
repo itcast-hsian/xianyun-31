@@ -33,9 +33,41 @@ import QRCode from "qrcode";
 export default {
     data(){
         return {
-            order: {}
+            order: {},
+            // 定时器的对象
+            timer: null
         }
     },
+
+    methods: {
+        //查询付款状态     
+        isPay(){
+            return this.$axios({
+                url: "/airorders/checkpay",
+                method: "POST",
+                data: {
+                    id: this.$route.query.id,
+                    nonce_str: this.order.price,
+                    out_trade_no: this.order.orderNo
+                },
+                headers: {
+                    Authorization: `Bearer ${this.$store.state.user.userInfo.token}`
+                }
+            }).then(res => {
+                if(res.data.statusTxt === "订单未支付"){
+                    return false;
+                }else{
+                    return true;
+                }
+            });
+        }
+    },
+
+    // 当页面销毁之后清楚定时器
+    destroyed(){
+        clearInterval(this.timer);
+    },
+
     mounted(){
         // 需要点时间把本地的值赋给store
         setTimeout(() => {
@@ -57,6 +89,17 @@ export default {
                 QRCode.toCanvas(stage, this.order.payInfo.code_url, {
                     width: 200
                 }); 
+
+                // 查询付款的结果
+                this.timer = setInterval(async () => {
+                    // 接收是resolve，也就是.then的返回值
+                    const pay = await this.isPay();
+                    if(pay){
+                        this.$message.success("订单支付成功");
+                        clearInterval(this.timer);
+                    }
+                }, 3000)
+                
             })
         }, 100)  
     }
